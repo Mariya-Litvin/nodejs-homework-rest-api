@@ -64,7 +64,7 @@ const updateById = async (req, res, next) => {
 const updateFavorite = async (req, res, next) => {
   const { error } = schemas.updateFavoriteSchema.validate(req.body);
   if (error) {
-    throw AppError(400, "missing fields favorite");
+    throw AppError(400, "missing field favorite");
   }
   const { contactId } = req.params;
   const result = await Contact.findOneAndUpdate({ _id: contactId }, req.body, {

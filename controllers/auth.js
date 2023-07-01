@@ -80,22 +80,22 @@ const logout = async (req, res) => {
 };
 
 const updateSubscription = async (req, res) => {
+  const { error } = schemas.updateSubscriptionSchema.validate(req.body);
+  if (error) {
+    throw AppError(400, "missing field subscription or set incorrectly");
+  }
   const { _id, email } = req.user;
   const { subscription } = req.body;
-  const sub = ["starter", "pro", "business"];
-  if (sub.includes(subscription)) {
-    await User.findOneAndUpdate(
-      _id,
-      { subscription },
-      {
-        new: true,
-      }
-    );
 
-    res.status(200).json({ email, subscription });
-  } else {
+  const result = await User.findOneAndUpdate(
+    _id,
+    { subscription },
+    { new: true }
+  );
+  if (!result) {
     throw AppError(404, "Not found");
   }
+  res.status(200).json({ email, subscription });
 };
 
 module.exports = {
