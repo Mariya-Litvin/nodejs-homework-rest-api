@@ -7,12 +7,13 @@ const { DB_HOST, PORT = 3000 } = process.env;
 
 describe("test login controller", () => {
   let server;
-
+  // Перед усіма тестами запускаємо сервер та під'єднуємося до бази даних
   beforeAll(() => {
     server = app.listen(PORT);
     mongoose.connect(DB_HOST);
   });
 
+  // Від'єднуємося від бази даних та зупиняємо сервер після виконання всіх тестів
   afterAll(() => {
     mongoose.disconnect();
     server.close();
