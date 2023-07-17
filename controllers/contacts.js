@@ -11,6 +11,8 @@ const getAllContacts = async (req, res, next) => {
     skip,
     limit,
   }).populate("owner", "email subscription");
+  // "-createdAt, -updatedAt" - ці поля з бази передавати в result не потрібно
+  // populate - розширення поля owner (додати поля email і subscription)
   res.status(200).json(result);
 };
 

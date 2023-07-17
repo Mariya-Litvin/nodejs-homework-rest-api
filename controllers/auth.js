@@ -23,12 +23,13 @@ const register = async (req, res) => {
   }
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-
+  // Перевірка на унікальність email для виведення нестандартного повідомлення
   if (user) {
     throw AppError(409, "Email in use");
   }
-
+  // Хешуємо пароль перед зберіганням
   const hashPassword = await bcrypt.hash(password, 10);
+  // Створюємо шлях до тимчасової аватарки
   const avatarURL = gravatar.url(email);
   const verificationToken = nanoid();
 
@@ -38,13 +39,13 @@ const register = async (req, res) => {
     avatarURL,
     verificationToken,
   });
-
+  // Створюємо email для передачі посилання на верифікацію
   const verifyEmail = {
     to: email,
     subject: "Verify email",
     html: `<a target="_blank" href='${BASE_URL}/api/auth/verify/${verificationToken}'>Click verify email</a>`,
   };
-
+  // Відправляємо email
   await sendEmail(verifyEmail);
 
   res.status(201).json({
@@ -56,12 +57,18 @@ const register = async (req, res) => {
 };
 
 const verifyEmail = async (req, res) => {
+  // отримуємо верифікаційний токен з параметрів запиту
   const { verificationToken } = req.params;
+  // шукаємо в базі користувача з таким токеном
   const user = await User.findOne({ verificationToken });
 
   if (!user) {
     throw AppError(404, "User not found");
   }
+  /* якщо знайшли користувача за цим токеном,то тепер він 
+  верифікований і токен робимо пустий
+  */
+
   await User.findByIdAndUpdate(user._id, {
     verify: true,
     verificationToken: "",
@@ -113,12 +120,13 @@ const login = async (req, res) => {
   if (!user.verify) {
     throw AppError(401, "Email not verified");
   }
-
+  /* метод compare перевіряє чи є user.password
+  захешованою версією password */
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (!passwordCompare) {
     throw AppError(401, "Email or password is wrong");
   }
-
+  // Створюємо токен
   const payload = {
     id: user._id,
   };
@@ -175,13 +183,16 @@ const updateSubscription = async (req, res) => {
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
   const { path: tempUpload, originalname } = req.file;
+  // перейменовуємо файл
   const filename = `${_id}_${originalname}`;
   const resultUpload = path.join(avatarsDir, filename);
-
+  // зміна розміру зображення за допомогою jimp
   await Jimp.read(tempUpload).then((avatar) => {
     return avatar.resize(250, 250).write(tempUpload);
   });
+  // переносимо файл з тимчасової папки в public/avatars
   await fs.rename(tempUpload, resultUpload);
+  // записуємо шлях до файлу в базу в поле avatarURL
   const avatarURL = path.join("avatars", filename);
   await User.findByIdAndUpdate(_id, { avatarURL });
 
