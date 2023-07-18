@@ -21,7 +21,7 @@ describe("test login controller", () => {
 
   it("should return status 200, token and user", async () => {
     const testData = {
-      email: "testuser@gmail.com",
+      email: "xixib68052@muzitp.com",
       password: "111222333",
     };
 
@@ -41,7 +41,7 @@ describe("test login controller", () => {
 
   it("should return 401 status, incorrect email", async () => {
     const testData = {
-      email: "testuser1111111@gmail.com",
+      email: "xixib68052111111111@muzitp.com",
       password: "111222333",
     };
 
@@ -52,7 +52,7 @@ describe("test login controller", () => {
 
   it("should return 401 status, incorrect password", async () => {
     const testData = {
-      email: "testuser@gmail.com",
+      email: "xixib68052@muzitp.com",
       password: "1112223334",
     };
 
@@ -79,7 +79,7 @@ describe("test login controller", () => {
 
   it("should return 400 status, not field password", async () => {
     const testData = {
-      email: "testuser@gmail.com",
+      email: "xixib68052@muzitp.com",
     };
 
     const res = await request(app).post("/api/auth/login").send(testData);
