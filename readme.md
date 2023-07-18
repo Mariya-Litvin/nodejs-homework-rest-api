@@ -1,6 +1,6 @@
-## Node.js backend Contacts app
+### Node.js backend Contacts app
 
-Using Technologies:
+## Using Technologies:
 
 - Node.js
 - Express.js
@@ -30,7 +30,7 @@ Using Technologies:
 - /curent
 - /avatars
 
-### Commands:
+## Commands:
 
 - `npm start` &mdash; server start in production mode
 - `npm run start:dev` &mdash; start the server in development mode
